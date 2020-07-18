@@ -1,5 +1,8 @@
 A lightweight wrapper to use fetch more efficiently and easily and with better error handling, and this is promisified!
 
+![Size](https://badgen.net/bundlephobia/minzip/fetch-req)
+![Types](https://badgen.net/npm/types/fetch-req)
+
 ---
 
 **Basic usage:**  
