@@ -3,21 +3,30 @@ A lightweight wrapper to use fetch more efficiently and easily and with better e
 ---
 
 **Basic usage:**  
+import from CDN
+```
+<script type="text/javascript" src="https://unpkg.com/fetch-req@1.0.0"></script>
+```
+
+Or from NPM,
 
 ```
-import fetch22 from 'fetch22';
+import fetch from 'fetch-req';
+```
+
+```
 const someFunction = async ()=> {
-  const respGET = await fetch22.get('http://dummy.restapiexample.com/api/v1/employees');
-  const respPOST = await fetch22.post('http://dummy.restapiexample.com/api/v1/employees', { 'dummyData': 'Mukesh'});
+  const respGET = await fetch.get('http://dummy.restapiexample.com/api/v1/employees');
+  const respPOST = await fetch.post('http://dummy.restapiexample.com/api/v1/employees', { 'dummyData': 'Mukesh'});
 }
 ```
 
 **Additional methods:**  
 **1. Poll** - call an endpoint and handle response in interval.  
 ```
-const endpoint = () => fetch22.get('http://dummy.restapiexample.com/api/v1/employees');
+const endpoint = () => fetch.get('http://dummy.restapiexample.com/api/v1/employees');
 
-const poll = fetch22.poll(endpoint, callback, 1000);
+const poll = fetch.poll(endpoint, callback, 1000);
 poll.pause();                // Pause polling
 poll.resume();               // Resume polling
 poll.updateInterval(10000);  // Update the interval, set it to 1000ms
@@ -28,5 +37,5 @@ from the time last response received.
 
 **2. Retry** - Retry no of times in case request fails.  
 ```
-  fetch22.retry(3).get('http://dummy.restapiexample.com/api/v1/employees');
+  fetch.retry(3).get('http://dummy.restapiexample.com/api/v1/employees');
 ```
