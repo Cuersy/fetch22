@@ -40,5 +40,5 @@ from the time last response received.
 
 **2. Retry** - Retry no of times in case request fails.  
 ```
-  fetch.retry(3).get('http://dummy.restapiexample.com/api/v1/employees');
+const resp = await fetch.retry(3).get('http://dummy.restapiexample.com/api/v1/employees');
 ```
