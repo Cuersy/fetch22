@@ -14,7 +14,7 @@ A lightweight wrapper to use fetch more efficiently and easily and with better e
 
 import from CDN
 ```
-<script type="text/javascript" src="https://unpkg.com/fetch-req@1.0.0"></script>
+<script type="text/javascript" src="https://unpkg.com/fetch-req"></script>
 ```
 
 Or from NPM,
@@ -26,7 +26,9 @@ import fetch from 'fetch-req';
 ```
 const someFunction = async ()=> {
   const respGET = await fetch.get('http://dummy.restapiexample.com/api/v1/employees');
-  const respPOST = await fetch.post('http://dummy.restapiexample.com/api/v1/employees', { 'dummyData': 'Mukesh'});
+  const respPOST = await fetch.post('http://dummy.restapiexample.com/api/v1/employees', { 
+    'dummyData': 'Mukesh'
+  })
 }
 ```
 
