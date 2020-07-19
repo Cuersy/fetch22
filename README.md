@@ -4,9 +4,14 @@ A lightweight wrapper to use fetch more efficiently and easily and with better e
 ![Types](https://badgen.net/npm/types/fetch-req)
 ![Downloads](https://badgen.net/npm/dt/fetch-req)
 
+
 ---
 
-**Basic usage:**  
+## Basic usage:
+
+[![Edit tender-field-22tkq](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/tender-field-22tkq?fontsize=14&hidenavigation=1&theme=dark)
+
+
 import from CDN
 ```
 <script type="text/javascript" src="https://unpkg.com/fetch-req@1.0.0"></script>
@@ -18,7 +23,6 @@ Or from NPM,
 import fetch from 'fetch-req';
 ```
 
-
 ```
 const someFunction = async ()=> {
   const respGET = await fetch.get('http://dummy.restapiexample.com/api/v1/employees');
@@ -26,7 +30,7 @@ const someFunction = async ()=> {
 }
 ```
 
-**Additional methods:**  
+## Additional methods:
 **1. Poll** - call an endpoint and handle response in interval.  
 ```
 const endpoint = () => fetch.get('http://dummy.restapiexample.com/api/v1/employees');
