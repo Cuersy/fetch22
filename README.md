@@ -2,6 +2,7 @@ A lightweight wrapper to use fetch more efficiently and easily and with better e
 
 ![Size](https://badgen.net/bundlephobia/minzip/fetch-req)
 ![Types](https://badgen.net/npm/types/fetch-req)
+![Downloads](https://badgen.net/npm/dt/fetch-req)
 
 ---
 
@@ -16,6 +17,7 @@ Or from NPM,
 ```
 import fetch from 'fetch-req';
 ```
+
 
 ```
 const someFunction = async ()=> {
@@ -32,7 +34,7 @@ const endpoint = () => fetch.get('http://dummy.restapiexample.com/api/v1/employe
 const poll = fetch.poll(endpoint, callback, 1000);
 poll.pause();                // Pause polling
 poll.resume();               // Resume polling
-poll.updateInterval(10000);  // Update the interval, set it to 1000ms
+poll.updateInterval(1000);  // Update the interval, set it to 1000ms
 ```
 
 **Note:** This doesn't use `setInterval`, and it **prevents the race conditions** because, it makes the next call exactly after given time(in ms) 
