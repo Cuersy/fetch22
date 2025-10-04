@@ -1,53 +1,89 @@
-import {
-  RequestMethod,
-  RequestOptions,
-  FunctionObject,
-  RequestBody,
-} from './types';
-import makeRequest from './utils/request';
-import funcRetry from './utils/retry';
+import { useEffect, useRef, useState } from 'react';
+import { RequestMethod, RequestOptions, FunctionObject, RequestBody } from './types';
+import makeRequest, { fetcherror } from './utils/request';
+import funcretry from './utils/retry';
 import poll from './poll';
 
-const get = <T>(url: string, options?: RequestOptions): Promise<T> =>
-  makeRequest(url, RequestMethod.GET, null, options);
-const post = <T>(
+const get = async <T>(url: string, options?: RequestOptions): Promise<T> =>
+  makeRequest<T>(url, RequestMethod.GET, '', options, options?.timeout || 0);
+
+const post = async <T>(url: string, body: RequestBody, options?: RequestOptions): Promise<T> =>
+  makeRequest<T>(url, RequestMethod.POST, body, options, options?.timeout || 0);
+
+const put = async <T>(url: string, body: RequestBody, options?: RequestOptions): Promise<T> =>
+  makeRequest<T>(url, RequestMethod.PUT, body, options, options?.timeout || 0);
+
+const del = async <T>(url: string, options?: RequestOptions): Promise<T> =>
+  makeRequest<T>(url, RequestMethod.DELETE, '', options, options?.timeout || 0);
+
+const retry = (attempt = 3, delay = 500) => {
+  const list: FunctionObject = {};
+
+  list.get = <T>(url: string, body?: RequestBody, options?: RequestOptions) =>
+    funcretry(() => get<T>(url, options), attempt, delay);
+
+  list.post = <T>(url: string, body?: RequestBody, options?: RequestOptions) =>
+    funcretry(() => post<T>(url, body || {}, options), attempt, delay);
+
+  list.put = <T>(url: string, body?: RequestBody, options?: RequestOptions) =>
+    funcretry(() => put<T>(url, body || {}, options), attempt, delay);
+
+  list.del = <T>(url: string, body?: RequestBody, options?: RequestOptions) =>
+    funcretry(() => del<T>(url, options), attempt, delay);
+
+  return list;
+};
+
+type usefetchresult<T> = {
+  data: T | null;
+  error: Error | null;
+  loading: boolean;
+  abort: () => void;
+  refetch: () => Promise<void>;
+};
+
+const usefetch = <T = any>(
   url: string,
-  body: RequestBody,
   options?: RequestOptions,
-): Promise<T> => makeRequest(url, RequestMethod.POST, body, options);
-const put = <T>(
-  url: string,
-  body: RequestBody,
-  options?: RequestOptions,
-): Promise<T> => makeRequest(url, RequestMethod.PUT, body, options);
-const del = <T>(url: string, options?: RequestOptions): Promise<T> =>
-  makeRequest(url, RequestMethod.DELETE, null, options);
+  deps: any[] = [],
+): usefetchresult<T> => {
+  const controllerRef = useRef<AbortController | null>(null);
+  const [data, setData] = useState<T | null>(null);
+  const [error, setError] = useState<Error | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
-const methods: FunctionObject = {
-  get: get,
-  post: post,
-  put: put,
-  del: del,
+  const fetcher = async () => {
+    setLoading(true);
+    setError(null);
+    controllerRef.current?.abort();
+    const controller = new AbortController();
+    controllerRef.current = controller;
+
+    try {
+      const resp = await makeRequest<T>(url, RequestMethod.GET, '', { ...options, signal: controller.signal }, options?.timeout || 0);
+      setData(resp as T);
+    } catch (err: any) {
+      if (err && (err as any).name === 'FetchError' && (err as any).message === 'request aborted') {
+        setError(err);
+      } else {
+        setError(err instanceof Error ? err : new Error(String(err)));
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetcher();
+    return () => controllerRef.current?.abort();
+  }, deps);
+
+  const abort = () => controllerRef.current?.abort();
+  const refetch = async () => fetcher();
+
+  return { data, error, loading, abort, refetch };
 };
 
-const retry = (attempt?: number) => {
-  const retryMethods: FunctionObject = {};
+const lib = { get, post, put, del, retry, poll, usefetch };
 
-  Object.keys(methods).forEach((key: string) => {
-    retryMethods[key] = (...args: any) =>
-      funcRetry(methods[key].bind(null, args), attempt);
-  });
-
-  return retryMethods;
-};
-
-const fetch22 = {
-  get,
-  post,
-  put,
-  del,
-  retry,
-  poll,
-};
-
-export default fetch22;
+export default lib;

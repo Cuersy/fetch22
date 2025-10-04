@@ -1,22 +1,23 @@
 import sleep from './sleep';
-const funcRetry = async <T>(
-  func: any,
+
+
+const funcretry = async <T>(
+  func: () => Promise<T>,
   attempt = 3,
   delay = 500,
 ): Promise<T> => {
-  const canRetry = attempt > 0;
-  let resp;
-  try {
-    resp = await func();
-  } catch (err) {
-    if (canRetry) {
-      await sleep(attempt * delay);
-      return funcRetry(func, attempt - 1);
+  let lasterror: any;
+  for (let i = 0; i < attempt; i++) {
+    try {
+      return await func();
+    } catch (err) {
+      lasterror = err;
+      const backoff = delay * Math.pow(2, i);
+      await sleep(backoff);
     }
-    throw err;
   }
 
-  return resp;
+  throw lasterror;
 };
 
-export default funcRetry;
+export default funcretry;

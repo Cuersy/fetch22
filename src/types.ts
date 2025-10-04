@@ -22,4 +22,6 @@ export enum RequestMethod {
 
 export type RequestOptions = {
   headers?: StringObject;
+  timeout?: number;
+  signal?: AbortSignal | null;
 };
